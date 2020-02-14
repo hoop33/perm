@@ -10,3 +10,8 @@ import (
 func Dir() string {
 	return filepath.Join(xdg.ConfigHome, AppName)
 }
+
+// HistoryFile returns the full path of the history file
+func HistoryFile() string {
+	return filepath.Join(Dir(), ".history")
+}

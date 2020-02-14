@@ -16,11 +16,7 @@ var rootCmd = &cobra.Command{
 It maintains state across requests, so you type less and get results quicker.`,
 	Version: config.AppVersion,
 	Run: func(cmd *cobra.Command, args []string) {
-		repl, err := shell.NewRepl(config.Dir())
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+		repl := shell.NewRepl()
 
 		if err := repl.Run(); err != nil {
 			fmt.Fprintln(os.Stderr, err)

@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	// Don't launch if we aren't going to be able to save our configuration
 	if err := verifyConfigDir(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
