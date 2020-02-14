@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/hoop33/perm/config"
 	"github.com/peterh/liner"
@@ -43,9 +44,19 @@ func (r *Repl) readHistory() {
 
 func (r *Repl) doLoop() error {
 	for {
-		if cmd, err := r.line.Prompt("> "); err == nil {
-			r.line.AppendHistory(cmd)
-			fmt.Println(cmd)
+		if cmdLine, err := r.line.Prompt("> "); err == nil {
+			cmds := strings.Split(cmdLine, " ")
+			if len(cmds) > 0 {
+				r.line.AppendHistory(cmdLine)
+				if cmd, ok := commands[cmds[0]]; ok {
+					err := cmd.run(cmds[1:])
+					if err != nil {
+						fmt.Fprintln(os.Stderr, err)
+					}
+				} else {
+					fmt.Fprintf(os.Stderr, "command '%s' not found\n", cmds[0])
+				}
+			}
 		} else if err == liner.ErrPromptAborted || err == io.EOF {
 			return nil
 		} else {
