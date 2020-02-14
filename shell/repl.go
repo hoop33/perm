@@ -78,5 +78,5 @@ func (r *Repl) saveHistory() error {
 
 func (r *Repl) createLiner() {
 	r.line = liner.NewLiner()
-	r.line.SetCtrlCAborts(true)
+	r.line.SetCtrlCAborts(false)
 }
