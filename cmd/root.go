@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hoop33/perm/shell"
 	"github.com/spf13/cobra"
 )
 
@@ -13,6 +14,13 @@ var rootCmd = &cobra.Command{
 	Long: `perm is a REPL for running HTTP and HTTPS commands.
 It maintains state across requests, so you type less and get results quicker.`,
 	Version: "0.1.0",
+	Run: func(cmd *cobra.Command, args []string) {
+		repl := shell.NewRepl()
+		if err := repl.Run(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	},
 }
 
 // Execute runs the root command
