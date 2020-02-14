@@ -3,6 +3,7 @@ module github.com/hoop33/perm
 go 1.13
 
 require (
+	github.com/adrg/xdg v0.2.1
 	github.com/mattn/go-runewidth v0.0.8 // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/peterh/liner v1.2.0
@@ -19,4 +20,5 @@ require (
 	golang.org/x/tools v0.0.0-20200213224642-88e652f7a869 // indirect
 	gopkg.in/ini.v1 v1.52.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
+	honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099
 )

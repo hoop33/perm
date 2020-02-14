@@ -2,17 +2,29 @@ package shell
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/peterh/liner"
 )
 
 // Repl is the REPL for perm
 type Repl struct {
+	configDir string
 }
 
 // NewRepl returns a new Repl
-func NewRepl() *Repl {
-	return &Repl{}
+func NewRepl(configDir string) (*Repl, error) {
+	info, err := os.Stat(configDir)
+	if err != nil {
+		return nil, err
+	}
+	if !info.IsDir() {
+		return nil, fmt.Errorf("config directory '%s' is a file", configDir)
+	}
+
+	return &Repl{
+		configDir,
+	}, nil
 }
 
 // Run runs the Repl loop
