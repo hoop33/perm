@@ -46,7 +46,7 @@ func (r *Repl) doLoop() error {
 	for {
 		if cmdLine, err := r.line.Prompt("> "); err == nil {
 			cmds := strings.Split(cmdLine, " ")
-			if len(cmds) > 0 {
+			if cmds[0] != "" {
 				r.line.AppendHistory(cmdLine)
 				if cmd, ok := commands[cmds[0]]; ok {
 					err := cmd.run(cmds[1:])
