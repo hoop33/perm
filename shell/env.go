@@ -2,19 +2,21 @@ package shell
 
 import (
 	"fmt"
+	"github.com/hoop33/perm/config"
+	"net/url"
 	"sort"
 )
 
 type env struct {
-	domain string
-	port   int
+	scheme string
+	host   string
 	vars   map[string]string
 }
 
 func newEnv() *env {
 	e := &env{
-		domain: "localhost",
-		port:   3000,
+		scheme: "http",
+		host:   "localhost:3000",
 		vars:   make(map[string]string),
 	}
 	allCommands[e.name()] = e
@@ -22,23 +24,23 @@ func newEnv() *env {
 	return e
 }
 
-func (e env) prompt() string {
-	return fmt.Sprintf("%s:%d> ", e.domain, e.port)
+func (e *env) prompt() string {
+	return fmt.Sprintf("%s://%s> ", e.scheme, e.host)
 }
 
-func (env) name() string {
+func (*env) name() string {
 	return "env"
 }
 
-func (env) description() string {
+func (*env) description() string {
 	return "display the current environment"
 }
 
-func (e env) usage() string {
+func (e *env) usage() string {
 	return e.name()
 }
 
-func (e env) run(_ *env, _ []string) error {
+func (e *env) run(_ *env, _ []string) error {
 	sorted := make([]string, 0, len(e.vars))
 	for key := range e.vars {
 		sorted = append(sorted, key)
@@ -50,4 +52,26 @@ func (e env) run(_ *env, _ []string) error {
 	}
 
 	return nil
+}
+
+func (e *env) mergeURL(urlStr string) (*url.URL, error) {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	scheme := config.FirstNonBlank(u.Scheme, e.scheme)
+	host := config.FirstNonBlank(u.Host, e.host)
+	path := config.AddPrefixIfAbsent(u.Path, "/")
+
+	// TODO build the whole thing
+	merged, err := url.Parse(fmt.Sprintf("%s://%s%s", scheme, host, path))
+	if err != nil {
+		return nil, err
+	}
+
+	e.scheme = merged.Scheme
+	e.host = merged.Host
+
+	return merged, nil
 }

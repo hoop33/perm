@@ -27,18 +27,115 @@ func TestEnvShouldRegisterItself(t *testing.T) {
 }
 
 func TestPromptShouldDefaultToLocalhost3000(t *testing.T) {
-	assert.Equal(t, "localhost:3000> ", newEnv().prompt())
+	assert.Equal(t, "http://localhost:3000> ", newEnv().prompt())
 }
 
-func TestPromptShouldUpdateWithDomainAndPort(t *testing.T) {
+func TestPromptShouldUpdateWithSchemeAndHost(t *testing.T) {
 	e := newEnv()
-	e.domain = "foo"
-	e.port = 12
-	assert.Equal(t, "foo:12> ", e.prompt())
+	e.scheme = "https"
+	e.host = "foo"
+	assert.Equal(t, "https://foo> ", e.prompt())
 }
 
 func TestEnvRunShouldReturnNilWhenEnvIsSelf(t *testing.T) {
 	e := newEnv()
 	e.vars["foo"] = "bar"
 	assert.Nil(t, e.run(e, nil))
+}
+
+func TestEnvMergeURLShouldReturnTheSameURLWhenURLIsAbsolute(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	url, err := e.mergeURL("https://grailbox.com")
+	assert.Nil(t, err)
+	assert.Equal(t, "https://grailbox.com/", url.String())
+}
+
+func TestEnvMergeURLShouldChangeTheBaseURLWhenURLIsAbsolute(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("https://grailbox.com")
+	assert.Nil(t, err)
+	assert.Equal(t, "https", e.scheme)
+	assert.Equal(t, "grailbox.com", e.host)
+}
+
+func TestEnvMergeURLShouldReturnTheSameURLWhenURLIsAbsoluteAndHasPath(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	url, err := e.mergeURL("https://grailbox.com/uses")
+	assert.Nil(t, err)
+	assert.Equal(t, "https://grailbox.com/uses", url.String())
+}
+
+func TestEnvMergeURLShouldChangeTheBaseURLWhenURLIsAbsoluteAndHasPath(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("https://grailbox.com/uses")
+	assert.Nil(t, err)
+	assert.Equal(t, "https", e.scheme)
+	assert.Equal(t, "grailbox.com", e.host)
+}
+
+func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelative(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	url, err := e.mergeURL("/")
+	assert.Nil(t, err)
+	assert.Equal(t, "http://localhost:3000/", url.String())
+}
+
+func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelative(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("/")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasPath(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("/foo/bar")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasPath(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("/foo/bar")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasPathNoLeadingSlash(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("foo/bar")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasPathNoLeadingSlash(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("foo/bar")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
 }
