@@ -11,7 +11,11 @@ func TestVersionNameShouldReturnVersion(t *testing.T) {
 }
 
 func TestVersionsDescriptionShouldNotBeEmpty(t *testing.T) {
-  assert.NotEqual(t, "", version(0).description())
+	assert.NotEqual(t, "", version(0).description())
+}
+
+func TestVersionUsageShouldNotBeEmpty(t *testing.T) {
+	assert.NotEqual(t, "", version(0).usage())
 }
 
 func TestVersionRunShouldReturnNil(t *testing.T) {
