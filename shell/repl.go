@@ -29,6 +29,7 @@ func (r *Repl) Run() error {
 	defer r.line.Close()
 
 	r.readHistory()
+	r.displayBanner()
 	err := r.doLoop()
 	if err2 := r.saveHistory(); err2 != nil {
 		fmt.Fprintln(os.Stderr, err2)
@@ -43,6 +44,11 @@ func (r *Repl) readHistory() {
 		r.line.ReadHistory(f)
 		f.Close()
 	}
+}
+
+func (r *Repl) displayBanner() {
+	fmt.Printf("%s %s\n", config.AppName, config.AppVersion)
+	fmt.Println("Type \"help\" for more information.")
 }
 
 func (r *Repl) doLoop() error {
