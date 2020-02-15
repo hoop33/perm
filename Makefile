@@ -10,6 +10,10 @@ all: build
 build: check
 	go build
 
+.PHONY: install
+install:
+	go install
+
 .PHONY: check
 check: vet lint test
 
