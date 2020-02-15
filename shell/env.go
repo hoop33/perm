@@ -65,7 +65,7 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 	path := config.AddPrefixIfAbsent(u.Path, "/")
 
 	// TODO build the whole thing
-	merged, err := url.Parse(fmt.Sprintf("%s://%s%s", scheme, host, path))
+	merged, err := url.Parse(fmt.Sprintf("%s://%s%s#%s", scheme, host, path, u.Fragment))
 	if err != nil {
 		return nil, err
 	}

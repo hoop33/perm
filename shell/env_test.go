@@ -2,6 +2,7 @@ package shell
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/url"
 	"testing"
 )
 
@@ -81,6 +82,44 @@ func TestEnvMergeURLShouldChangeTheBaseURLWhenURLIsAbsoluteAndHasPath(t *testing
 	assert.Equal(t, "grailbox.com", e.host)
 }
 
+func TestEnvMergeURLShouldReturnTheSameURLWhenURLIsAbsoluteAndHasFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	url, err := e.mergeURL("https://grailbox.com/#foo")
+	assert.Nil(t, err)
+	assert.Equal(t, "https://grailbox.com/#foo", url.String())
+}
+
+func TestEnvMergeURLShouldChangeTheBaseURLWhenURLIsAbsoluteAndHasFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("https://grailbox.com/#foo")
+	assert.Nil(t, err)
+	assert.Equal(t, "https", e.scheme)
+	assert.Equal(t, "grailbox.com", e.host)
+}
+
+func TestEnvMergeURLShouldReturnTheSameURLWhenURLIsAbsoluteAndHasPathAndFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	url, err := e.mergeURL("https://grailbox.com/bar#foo")
+	assert.Nil(t, err)
+	assert.Equal(t, "https://grailbox.com/bar#foo", url.String())
+}
+
+func TestEnvMergeURLShouldChangeTheBaseURLWhenURLIsAbsoluteAndHasPathFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("https://grailbox.com/bar#foo")
+	assert.Nil(t, err)
+	assert.Equal(t, "https", e.scheme)
+	assert.Equal(t, "grailbox.com", e.host)
+}
+
 func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelative(t *testing.T) {
 	e := newEnv()
 	e.scheme = "http"
@@ -104,10 +143,9 @@ func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasPath(t *testing.
 	e := newEnv()
 	e.scheme = "http"
 	e.host = "localhost:3000"
-	_, err := e.mergeURL("/foo/bar")
+	url, err := e.mergeURL("/foo/bar")
 	assert.Nil(t, err)
-	assert.Equal(t, "http", e.scheme)
-	assert.Equal(t, "localhost:3000", e.host)
+	assert.Equal(t, "http://localhost:3000/foo/bar", url.String())
 }
 
 func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasPath(t *testing.T) {
@@ -124,10 +162,9 @@ func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasPathNoLeadingSla
 	e := newEnv()
 	e.scheme = "http"
 	e.host = "localhost:3000"
-	_, err := e.mergeURL("foo/bar")
+	url, err := e.mergeURL("foo/bar")
 	assert.Nil(t, err)
-	assert.Equal(t, "http", e.scheme)
-	assert.Equal(t, "localhost:3000", e.host)
+	assert.Equal(t, "http://localhost:3000/foo/bar", url.String())
 }
 
 func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasPathNoLeadingSlash(t *testing.T) {
@@ -135,6 +172,25 @@ func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasPathNoLeadingSl
 	e.scheme = "http"
 	e.host = "localhost:3000"
 	_, err := e.mergeURL("foo/bar")
+	assert.Nil(t, err)
+	assert.Equal(t, "http", e.scheme)
+	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("#foo")
+	assert.Nil(t, err)
+	assert.Equal(t, "http://localhost:3000/#foo", url.String())
+}
+
+func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasFragment(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("#foo")
 	assert.Nil(t, err)
 	assert.Equal(t, "http", e.scheme)
 	assert.Equal(t, "localhost:3000", e.host)
