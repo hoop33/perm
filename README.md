@@ -77,6 +77,22 @@ https://grailbox.com> get https://github.com/hoop33/perm
 ```
 GETs <https://github.com/hoop33/perm> and changes the current base URL to `https://github.com`.
 
+## TODO
+
+- [ ] Colorize text
+- [ ] Load/save environments
+- [ ] Configure HTTP client (timeout, insecure, ??)
+- [ ] Add S3 URLs
+- [ ] GET with query string
+- [ ] POST
+- [ ] PUT
+- [ ] DELETE
+- [ ] HEAD
+- [ ] Cookies
+- [ ] Headers
+- [ ] Open in Browser
+- [ ] Why did I add environment variables?
+
 ## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. The code of contact is available [here](code_of_conduct.md).
