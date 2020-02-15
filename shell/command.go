@@ -12,6 +12,30 @@ type command interface {
 }
 
 var allCommands = make(map[string]command)
+var sorted []string
+var maxCommandLength int
+
+func sortedNames() []string {
+  if len(sorted) == 0 {
+    sorted = make([]string, 0, len(allCommands))
+    for name := range allCommands {
+      sorted = append(sorted, name)
+    }
+    sort.Strings(sorted)
+  }
+  return sorted
+}
+
+func maxLen() int {
+  if maxCommandLength == 0 {
+    for _, name := range sortedNames() {
+      if len(name) > maxCommandLength {
+        maxCommandLength = len(name)
+      }
+    }
+  }
+  return maxCommandLength
+}
 
 type commands int
 
@@ -24,20 +48,9 @@ func (commands) description() string {
 }
 
 func (commands) run(_ []string) error {
-  maxLen := 0
-  names := make([]string, 0, len(allCommands))
-  for name := range allCommands {
-    names = append(names, name)
-    if len(name) > maxLen {
-      maxLen = len(name)
-    }
+  for _, name := range sortedNames() {
+    fmt.Printf("%-*s  %s\n", maxLen(), name, allCommands[name].description())
   }
-  sort.Strings(names)
-
-  for _, name := range names {
-    fmt.Printf("%-*s  %s\n", maxLen, name, allCommands[name].description())
-  }
-
   return nil
 }
 
