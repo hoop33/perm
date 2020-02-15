@@ -9,6 +9,10 @@ func (version) name() string {
 	return "version"
 }
 
+func (version) description() string {
+  return "display the application version"
+}
+
 func (version) run(_ []string) error {
 	fmt.Println(config.AppVersion)
 	return nil
@@ -16,5 +20,5 @@ func (version) run(_ []string) error {
 
 func init() {
 	v := version(0)
-	commands[v.name()] = v
+	allCommands[v.name()] = v
 }
