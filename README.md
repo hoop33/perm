@@ -61,6 +61,22 @@ You interact with Perm through this prompt. You type a command, Perm executes it
 
 ### Commands
 
+`commands`
+Displays a list of all available commands
+
+`get <url>`
+Performs an HTTP GET on the specified URL. This URL can be relative or absolute. If relative, Perm uses the current base URL to GET the specified URL. If absolute, Perm GETs the specified URL _and_ replaces its current base URL. Examples:
+
+```sh
+https://grailbox.com> get /uses
+```
+GETs <https://grailbox.com/uses> and retains `https://grailbox.com` as the base URL.
+
+```sh
+https://grailbox.com> get https://github.com/hoop33/perm
+```
+GETs <https://github.com/hoop33/perm> and changes the current base URL to `https://github.com`.
+
 ## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. The code of contact is available [here](code_of_conduct.md).
