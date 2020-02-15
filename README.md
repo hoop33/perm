@@ -80,6 +80,7 @@ GETs <https://github.com/hoop33/perm> and changes the current base URL to `https
 ## TODO
 
 - [ ] Colorize text
+- [ ] Add exit command
 - [ ] Load/save environments
 - [ ] Configure HTTP client (timeout, insecure, ??)
 - [ ] Add S3 URLs
