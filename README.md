@@ -42,6 +42,25 @@ $ make && make install
 
 ## Usage
 
+To launch the application, just type `perm`:
+
+```sh
+$ perm
+```
+
+After a welcome banner, Perm will display a prompt with your current base URL:
+
+```sh
+$ perm
+perm 0.1.0
+Type "help" for more information.
+http://localhost:3000>
+```
+
+You interact with Perm through this prompt. You type a command, Perm executes it, and returns you to this prompt. You can exit Perm by typing `Ctrl-D` or using the `exit` command.
+
+### Commands
+
 ## Contributing
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. The code of contact is available [here](code_of_conduct.md).
