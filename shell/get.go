@@ -2,6 +2,8 @@ package shell
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 )
 
 type get int
@@ -29,21 +31,19 @@ func (g get) run(env *env, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Getting %s\n", url.String())
 
-	//resp, err := http.Get(url.String())
-	//if err != nil {
-	//	return err
-	//}
-	//defer resp.Body.Close()
-	//body, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//fmt.Println(string(body))
-	//
-	//fmt.Println(url.String())
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(body))
+
 	return nil
 }
 

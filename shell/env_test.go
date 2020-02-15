@@ -2,7 +2,6 @@ package shell
 
 import (
 	"github.com/stretchr/testify/assert"
-	"net/url"
 	"testing"
 )
 
@@ -181,7 +180,7 @@ func TestEnvMergeURLShouldReturnMergedURLWhenURLIsRelativeAndHasFragment(t *test
 	e := newEnv()
 	e.scheme = "http"
 	e.host = "localhost:3000"
-	_, err := e.mergeURL("#foo")
+	url, err := e.mergeURL("#foo")
 	assert.Nil(t, err)
 	assert.Equal(t, "http://localhost:3000/#foo", url.String())
 }
