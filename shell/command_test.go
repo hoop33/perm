@@ -23,7 +23,7 @@ func TestCommandsShouldRegisterItself(t *testing.T) {
 }
 
 func TestSortedNamesShouldHaveTheSameLengthAsAllCommands(t *testing.T) {
-  assert.Equal(t, len(sortedNames()), len(allCommands))
+  assert.Equal(t, len(sortedCommandNames()), len(allCommands))
 }
 
 func TestMaxLenShouldBeGreaterThanZero(t *testing.T) {

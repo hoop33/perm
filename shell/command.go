@@ -15,7 +15,7 @@ var allCommands = make(map[string]command)
 var sorted []string
 var maxCommandLength int
 
-func sortedNames() []string {
+func sortedCommandNames() []string {
   if len(sorted) == 0 {
     sorted = make([]string, 0, len(allCommands))
     for name := range allCommands {
@@ -28,7 +28,7 @@ func sortedNames() []string {
 
 func maxLen() int {
   if maxCommandLength == 0 {
-    for _, name := range sortedNames() {
+    for _, name := range sortedCommandNames() {
       if len(name) > maxCommandLength {
         maxCommandLength = len(name)
       }
@@ -48,7 +48,7 @@ func (commands) description() string {
 }
 
 func (commands) run(_ []string) error {
-  for _, name := range sortedNames() {
+  for _, name := range sortedCommandNames() {
     fmt.Printf("%-*s  %s\n", maxLen(), name, allCommands[name].description())
   }
   return nil

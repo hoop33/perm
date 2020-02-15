@@ -79,4 +79,12 @@ func (r *Repl) saveHistory() error {
 func (r *Repl) createLiner() {
 	r.line = liner.NewLiner()
 	r.line.SetCtrlCAborts(false)
+	r.line.SetCompleter(func(line string) (c []string) {
+	  for _, n := range sortedCommandNames() {
+	    if strings.HasPrefix(n, strings.ToLower(line)) {
+	      c = append(c, n)
+      }
+    }
+    return
+  })
 }
