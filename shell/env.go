@@ -6,16 +6,24 @@ import (
 )
 
 type env struct {
-	vars map[string]string
+	domain string
+	port   int
+	vars   map[string]string
 }
 
 func newEnv() *env {
 	e := &env{
-		vars: make(map[string]string),
+		domain: "localhost",
+		port:   3000,
+		vars:   make(map[string]string),
 	}
 	allCommands[e.name()] = e
 
 	return e
+}
+
+func (e env) prompt() string {
+	return fmt.Sprintf("%s:%d> ", e.domain, e.port)
 }
 
 func (env) name() string {

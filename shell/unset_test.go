@@ -25,3 +25,26 @@ func TestUnsetShouldRegisterItself(t *testing.T) {
 	_, ok := allCommands[unset(0).name()]
 	assert.True(t, ok)
 }
+
+func TestUnsetShouldRemoveVarFromEnvWhenPresent(t *testing.T) {
+	e := newEnv()
+	e.vars["foo"] = "bar"
+	_, ok := e.vars["foo"]
+	assert.True(t, ok)
+	assert.Nil(t, unset(0).run(e, []string{"foo"}))
+	_, ok = e.vars["foo"]
+	assert.False(t, ok)
+}
+
+func TestUnsetShouldDoNothingWhenVarNotPresent(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, unset(0).run(e, []string{"foo"}))
+	_, ok := e.vars["foo"]
+	assert.False(t, ok)
+}
+
+func TestUnsetShouldDoNothingWhenNoVarPassed(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, unset(0).run(e, []string{""}))
+	assert.Equal(t, 0, len(e.vars))
+}

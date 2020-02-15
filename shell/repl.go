@@ -47,7 +47,7 @@ func (r *Repl) readHistory() {
 
 func (r *Repl) doLoop() error {
 	for {
-		if cmdLine, err := r.line.Prompt("> "); err == nil {
+		if cmdLine, err := r.line.Prompt(r.env.prompt()); err == nil {
 			cmds := strings.Split(cmdLine, " ")
 			if cmds[0] != "" {
 				r.line.AppendHistory(cmdLine)

@@ -25,3 +25,20 @@ func TestEnvShouldRegisterItself(t *testing.T) {
 	_, ok := allCommands[newEnv().name()]
 	assert.True(t, ok)
 }
+
+func TestPromptShouldDefaultToLocalhost3000(t *testing.T) {
+	assert.Equal(t, "localhost:3000> ", newEnv().prompt())
+}
+
+func TestPromptShouldUpdateWithDomainAndPort(t *testing.T) {
+	e := newEnv()
+	e.domain = "foo"
+	e.port = 12
+	assert.Equal(t, "foo:12> ", e.prompt())
+}
+
+func TestEnvRunShouldReturnNilWhenEnvIsSelf(t *testing.T) {
+	e := newEnv()
+	e.vars["foo"] = "bar"
+	assert.Nil(t, e.run(e, nil))
+}
