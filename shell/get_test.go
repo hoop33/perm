@@ -18,7 +18,7 @@ func TestGetUsageShouldNotBeEmpty(t *testing.T) {
 }
 
 func TestGetRunShouldReturnNil(t *testing.T) {
-	assert.Nil(t, get(0).run(nil))
+	assert.Nil(t, get(0).run(nil, nil))
 }
 
 func TestGetShouldRegisterItself(t *testing.T) {

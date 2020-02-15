@@ -19,7 +19,7 @@ func TestVersionUsageShouldNotBeEmpty(t *testing.T) {
 }
 
 func TestVersionRunShouldReturnNil(t *testing.T) {
-	assert.Nil(t, version(0).run(nil))
+	assert.Nil(t, version(0).run(nil, nil))
 }
 
 func TestVersionShouldRegisterItself(t *testing.T) {

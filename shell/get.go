@@ -20,7 +20,7 @@ func (g get) usage() string {
 	return fmt.Sprintf("%s <url>", g.name())
 }
 
-func (g get) run(args []string) error {
+func (g get) run(_ *env, args []string) error {
 	// TODO centralize client, make it configurable over the life of the program
 	if len(args) == 0 {
 		fmt.Println(g.usage())

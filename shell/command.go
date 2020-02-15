@@ -9,7 +9,7 @@ type command interface {
 	name() string
 	description() string
 	usage() string
-	run(args []string) error
+	run(env *env, args []string) error
 }
 
 var allCommands = make(map[string]command)
@@ -52,7 +52,7 @@ func (c commands) usage() string {
 	return c.name()
 }
 
-func (commands) run(_ []string) error {
+func (commands) run(_ *env, _ []string) error {
 	for _, name := range sortedCommandNames() {
 		fmt.Printf("%-*s  %s\n", maxLen(), name, allCommands[name].description())
 	}

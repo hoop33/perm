@@ -18,7 +18,7 @@ func TestCommandsUsageShouldNotBeEmpty(t *testing.T) {
 }
 
 func TestCommandsRunShouldReturnNil(t *testing.T) {
-	assert.Nil(t, commands(0).run(nil))
+	assert.Nil(t, commands(0).run(nil, nil))
 }
 
 func TestCommandsShouldRegisterItself(t *testing.T) {

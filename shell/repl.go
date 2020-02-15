@@ -13,11 +13,14 @@ import (
 // Repl is the REPL for perm
 type Repl struct {
 	line *liner.State
+	env  *env
 }
 
 // NewRepl returns a new Repl
 func NewRepl() *Repl {
-	return &Repl{}
+	return &Repl{
+		env: newEnv(),
+	}
 }
 
 // Run runs the Repl loop
@@ -49,7 +52,7 @@ func (r *Repl) doLoop() error {
 			if cmds[0] != "" {
 				r.line.AppendHistory(cmdLine)
 				if cmd, ok := allCommands[cmds[0]]; ok {
-					err := cmd.run(cmds[1:])
+					err := cmd.run(r.env, cmds[1:])
 					if err != nil {
 						fmt.Fprintln(os.Stderr, err)
 					}

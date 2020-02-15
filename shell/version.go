@@ -17,7 +17,7 @@ func (v version) usage() string {
 	return v.name()
 }
 
-func (version) run(_ []string) error {
+func (version) run(_ *env, _ []string) error {
 	fmt.Println(config.AppVersion)
 	return nil
 }
