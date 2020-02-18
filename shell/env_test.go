@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -194,6 +195,48 @@ func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasFragment(t *tes
 	assert.Nil(t, err)
 	assert.Equal(t, "http", e.scheme)
 	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvMergeURLShouldCreateQueryStringFromVars(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	e.vars["foo"] = "bar"
+	e.vars["baz"] = "bat"
+	url, err := e.mergeURL("/")
+	assert.Nil(t, err)
+	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "foo=bar"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "baz=bat"))
+}
+
+func TestEnvMergeURLShouldCreateVarsFromQueryString(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	_, err := e.mergeURL("/?foo=bar&baz=bat")
+	assert.Nil(t, err)
+	assert.Equal(t, "bar", e.vars["foo"])
+	assert.Equal(t, "bat", e.vars["baz"])
+}
+
+func TestEnvMergeURLShouldMergeQueryStringAndVars(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	e.vars["foo"] = "bar"
+	e.vars["baz"] = "bat"
+	url, err := e.mergeURL("/?one=two&three=four")
+	assert.Nil(t, err)
+	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "foo=bar"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "baz=bat"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "one=two"))
+	assert.NotEqual(t, -1, strings.Index(url.String(), "three=four"))
+	assert.Equal(t, "bar", e.vars["foo"])
+	assert.Equal(t, "bat", e.vars["baz"])
+	assert.Equal(t, "two", e.vars["one"])
+	assert.Equal(t, "four", e.vars["three"])
 }
 
 func TestEnvResetVarsShouldDeleteAllVars(t *testing.T) {

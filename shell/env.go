@@ -65,15 +65,34 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 		return nil, err
 	}
 
+	// Get the query string and, if it exists, add it to the env vars
+	qs, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO multiples
+	if len(qs) != 0 {
+		for k, v := range qs {
+			e.vars[k] = v[0]
+		}
+	}
+
 	scheme := config.FirstNonBlank(u.Scheme, e.scheme)
 	host := config.FirstNonBlank(u.Host, e.host)
 	path := config.AddPrefixIfAbsent(u.Path, "/")
 
-	// TODO build the whole thing
 	merged, err := url.Parse(fmt.Sprintf("%s://%s%s#%s", scheme, host, path, u.Fragment))
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO multiples
+	q := merged.Query()
+	for k, v := range e.vars {
+		q.Add(k, v)
+	}
+	merged.RawQuery = q.Encode()
 
 	e.scheme = merged.Scheme
 	e.host = merged.Host
