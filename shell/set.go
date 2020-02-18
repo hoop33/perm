@@ -19,12 +19,14 @@ func (s set) usage() string {
 }
 
 func (s set) run(env *env, args []string) error {
-	if len(args) != 2 {
-		fmt.Println(s.usage())
-		return nil
+	switch len(args) {
+	case 1:
+		env.vars[args[0]] = "true"
+	case 2:
+		env.vars[args[0]] = args[1]
+	default:
+		s.usage()
 	}
-
-	env.vars[args[0]] = args[1]
 
 	return nil
 }

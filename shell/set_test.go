@@ -1,8 +1,9 @@
 package shell
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetNameShouldReturnSet(t *testing.T) {
@@ -26,15 +27,21 @@ func TestSetShouldRegisterItself(t *testing.T) {
 	assert.True(t, ok)
 }
 
+func TestSetShouldSetEnvVarToTrueWhenOneArg(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"foo"}))
+	assert.Equal(t, "true", e.vars["foo"])
+}
+
 func TestSetShouldSetEnvVarWhenTwoArgs(t *testing.T) {
 	e := newEnv()
 	assert.Nil(t, set(0).run(e, []string{"foo", "bar"}))
 	assert.Equal(t, "bar", e.vars["foo"])
 }
 
-func TestSetShouldNotSetEnvVarWhenOneArg(t *testing.T) {
+func TestSetShouldNotSetEnvVarWhenThreeArgs(t *testing.T) {
 	e := newEnv()
-	assert.Nil(t, set(0).run(e, []string{"foo"}))
+	assert.Nil(t, set(0).run(e, []string{"foo", "bar", "baz"}))
 	_, ok := e.vars["foo"]
 	assert.False(t, ok)
 }
