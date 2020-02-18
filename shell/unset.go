@@ -9,20 +9,22 @@ func (unset) name() string {
 }
 
 func (unset) description() string {
-	return "unset an environment variable"
+	return "unset environment variable(s)"
 }
 
 func (u unset) usage() string {
-	return fmt.Sprintf("%s <key>", u.name())
+	return fmt.Sprintf("%s [var1] [var2] ... (leave blank for all)", u.name())
 }
 
 func (u unset) run(env *env, args []string) error {
-	if len(args) != 1 {
-		fmt.Println(u.usage())
-		return nil
+	if len(args) == 0 {
+		env.resetVars()
+	} else {
+		for _, k := range args {
+			delete(env.vars, k)
+		}
 	}
 
-	delete(env.vars, args[0])
 	return nil
 }
 

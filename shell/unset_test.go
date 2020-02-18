@@ -1,8 +1,9 @@
 package shell
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUnsetNameShouldReturnUnset(t *testing.T) {
@@ -18,7 +19,8 @@ func TestUnsetUsageShouldNotBeEmpty(t *testing.T) {
 }
 
 func TestUnsetRunShouldReturnNil(t *testing.T) {
-	assert.Nil(t, unset(0).run(nil, nil))
+	e := newEnv()
+	assert.Nil(t, unset(0).run(e, nil))
 }
 
 func TestUnsetShouldRegisterItself(t *testing.T) {
@@ -29,11 +31,16 @@ func TestUnsetShouldRegisterItself(t *testing.T) {
 func TestUnsetShouldRemoveVarFromEnvWhenPresent(t *testing.T) {
 	e := newEnv()
 	e.vars["foo"] = "bar"
+	e.vars["baz"] = "bat"
 	_, ok := e.vars["foo"]
+	assert.True(t, ok)
+	_, ok = e.vars["baz"]
 	assert.True(t, ok)
 	assert.Nil(t, unset(0).run(e, []string{"foo"}))
 	_, ok = e.vars["foo"]
 	assert.False(t, ok)
+	_, ok = e.vars["baz"]
+	assert.True(t, ok)
 }
 
 func TestUnsetShouldDoNothingWhenVarNotPresent(t *testing.T) {
@@ -43,8 +50,18 @@ func TestUnsetShouldDoNothingWhenVarNotPresent(t *testing.T) {
 	assert.False(t, ok)
 }
 
-func TestUnsetShouldDoNothingWhenNoVarPassed(t *testing.T) {
+func TestUnsetShouldRemoveAllWhenNoVarPassed(t *testing.T) {
 	e := newEnv()
-	assert.Nil(t, unset(0).run(e, []string{""}))
+	e.vars["foo"] = "bar"
+	e.vars["baz"] = "bat"
+	_, ok := e.vars["foo"]
+	assert.True(t, ok)
+	_, ok = e.vars["baz"]
+	assert.True(t, ok)
+	assert.Nil(t, unset(0).run(e, []string{}))
+	_, ok = e.vars["foo"]
+	assert.False(t, ok)
+	_, ok = e.vars["baz"]
+	assert.False(t, ok)
 	assert.Equal(t, 0, len(e.vars))
 }

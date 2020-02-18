@@ -1,8 +1,9 @@
 package shell
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvNameShouldReturnEnv(t *testing.T) {
@@ -193,4 +194,13 @@ func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasFragment(t *tes
 	assert.Nil(t, err)
 	assert.Equal(t, "http", e.scheme)
 	assert.Equal(t, "localhost:3000", e.host)
+}
+
+func TestEnvResetVarsShouldDeleteAllVars(t *testing.T) {
+	e := newEnv()
+	e.vars["foo"] = "bar"
+	e.vars["baz"] = "bat"
+	assert.Equal(t, 2, len(e.vars))
+	e.resetVars()
+	assert.Equal(t, 0, len(e.vars))
 }

@@ -2,9 +2,10 @@ package shell
 
 import (
 	"fmt"
-	"github.com/hoop33/perm/config"
 	"net/url"
 	"sort"
+
+	"github.com/hoop33/perm/config"
 )
 
 type env struct {
@@ -17,11 +18,15 @@ func newEnv() *env {
 	e := &env{
 		scheme: "http",
 		host:   "localhost:3000",
-		vars:   make(map[string]string),
 	}
+	e.resetVars()
 	allCommands[e.name()] = e
 
 	return e
+}
+
+func (e *env) resetVars() {
+	e.vars = make(map[string]string)
 }
 
 func (e *env) prompt() string {
