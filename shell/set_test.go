@@ -27,27 +27,65 @@ func TestSetShouldRegisterItself(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestSetShouldSetEnvVarToTrueWhenOneArg(t *testing.T) {
-	e := newEnv()
-	assert.Nil(t, set(0).run(e, []string{"foo"}))
-	assert.Equal(t, "true", e.vars["foo"])
-}
-
-func TestSetShouldSetEnvVarWhenTwoArgs(t *testing.T) {
-	e := newEnv()
-	assert.Nil(t, set(0).run(e, []string{"foo", "bar"}))
-	assert.Equal(t, "bar", e.vars["foo"])
-}
-
-func TestSetShouldNotSetEnvVarWhenThreeArgs(t *testing.T) {
-	e := newEnv()
-	assert.Nil(t, set(0).run(e, []string{"foo", "bar", "baz"}))
-	_, ok := e.vars["foo"]
-	assert.False(t, ok)
-}
-
-func TestSetShouldNotSetEnvVarWhenNoArgs(t *testing.T) {
+func TestSetShouldSetNothingWhenNoArgs(t *testing.T) {
 	e := newEnv()
 	assert.Nil(t, set(0).run(e, []string{}))
+	assert.Equal(t, 0, len(e.vars))
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetNothingWhenOneArg(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"var"}))
+	assert.Equal(t, 0, len(e.vars))
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetNothingWhenNotVarOrHeader(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"foo", "bar"}))
+	assert.Equal(t, 0, len(e.vars))
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetVarToTrueWhenVarKey(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"var", "foo"}))
+	assert.Equal(t, "true", e.vars["foo"])
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetVarWhenVarKeyValue(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"var", "foo", "bar"}))
+	assert.Equal(t, "bar", e.vars["foo"])
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetVarWhenVarKeyValueExtra(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"var", "foo", "bar", "baz"}))
+	assert.Equal(t, "bar", e.vars["foo"])
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestSetShouldSetHeaderToTrueWhenVarKey(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"header", "foo"}))
+	assert.Equal(t, "true", e.headers["foo"])
+	assert.Equal(t, 0, len(e.vars))
+}
+
+func TestSetShouldSetHeaderWhenVarKeyValue(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"header", "foo", "bar"}))
+	assert.Equal(t, "bar", e.headers["foo"])
+	assert.Equal(t, 0, len(e.vars))
+}
+
+func TestSetShouldSetHeaderWhenVarKeyValueExtra(t *testing.T) {
+	e := newEnv()
+	assert.Nil(t, set(0).run(e, []string{"header", "foo", "bar", "baz"}))
+	assert.Equal(t, "bar", e.headers["foo"])
 	assert.Equal(t, 0, len(e.vars))
 }

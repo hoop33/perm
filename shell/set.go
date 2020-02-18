@@ -11,19 +11,30 @@ func (set) name() string {
 }
 
 func (set) description() string {
-	return "set an environment variable"
+	return "set a header or query variable"
 }
 
 func (s set) usage() string {
-	return fmt.Sprintf("%s <key> <value>", s.name())
+	return fmt.Sprintf("%s <header|var> <key> <value>", s.name())
 }
 
 func (s set) run(env *env, args []string) error {
-	switch len(args) {
-	case 1:
-		env.vars[args[0]] = "true"
-	case 2:
-		env.vars[args[0]] = args[1]
+	// Need 2 values: <header|var> key [value]
+	if len(args) < 2 {
+		s.usage()
+		return nil
+	}
+
+	val := "true"
+	if len(args) >= 3 {
+		val = args[2]
+	}
+
+	switch args[0] {
+	case "header":
+		env.setHeader(args[1], val)
+	case "var":
+		env.setVar(args[1], val)
 	default:
 		s.usage()
 	}

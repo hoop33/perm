@@ -28,40 +28,80 @@ func TestUnsetShouldRegisterItself(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestUnsetShouldRemoveVarFromEnvWhenPresent(t *testing.T) {
+func TestUnsetShouldUnsetNothingWhenNoArgs(t *testing.T) {
 	e := newEnv()
-	e.vars["foo"] = "bar"
-	e.vars["baz"] = "bat"
-	_, ok := e.vars["foo"]
-	assert.True(t, ok)
-	_, ok = e.vars["baz"]
-	assert.True(t, ok)
-	assert.Nil(t, unset(0).run(e, []string{"foo"}))
-	_, ok = e.vars["foo"]
-	assert.False(t, ok)
-	_, ok = e.vars["baz"]
-	assert.True(t, ok)
+	e.setVar("foo", "bar")
+	e.setHeader("baz", "bat")
+	assert.Nil(t, unset(0).run(e, []string{""}))
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
 }
 
-func TestUnsetShouldDoNothingWhenVarNotPresent(t *testing.T) {
+func TestUnsetShouldUnsetNothingWhenNotVarOrHeader(t *testing.T) {
 	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setHeader("baz", "bat")
 	assert.Nil(t, unset(0).run(e, []string{"foo"}))
-	_, ok := e.vars["foo"]
-	assert.False(t, ok)
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
 }
 
-func TestUnsetShouldRemoveAllWhenNoVarPassed(t *testing.T) {
+func TestUnsetShouldUnsetAllVarsWhenVar(t *testing.T) {
 	e := newEnv()
-	e.vars["foo"] = "bar"
-	e.vars["baz"] = "bat"
-	_, ok := e.vars["foo"]
-	assert.True(t, ok)
-	_, ok = e.vars["baz"]
-	assert.True(t, ok)
-	assert.Nil(t, unset(0).run(e, []string{}))
-	_, ok = e.vars["foo"]
-	assert.False(t, ok)
-	_, ok = e.vars["baz"]
-	assert.False(t, ok)
+	e.setVar("foo", "bar")
+	e.setVar("fooa", "bara")
+	e.setHeader("baz", "bat")
+	assert.Nil(t, unset(0).run(e, []string{"var"}))
 	assert.Equal(t, 0, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
+}
+
+func TestUnsetShouldUnsetAllHeadersWhenHeader(t *testing.T) {
+	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setHeader("baz", "bat")
+	e.setHeader("baza", "bata")
+	assert.Nil(t, unset(0).run(e, []string{"header"}))
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 0, len(e.headers))
+}
+
+func TestUnsetShouldUnsetVarWhenVarAndPresent(t *testing.T) {
+	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setVar("fooa", "bara")
+	e.setHeader("baz", "bat")
+	assert.Nil(t, unset(0).run(e, []string{"var", "foo"}))
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
+}
+
+func TestUnsetShouldUnsetHeaderWhenHeaderAndPresent(t *testing.T) {
+	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setHeader("baz", "bat")
+	e.setHeader("baza", "bata")
+	assert.Nil(t, unset(0).run(e, []string{"header", "baz"}))
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
+}
+
+func TestUnsetShouldNotUnsetVarWhenVarAndAbsent(t *testing.T) {
+	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setVar("fooa", "bara")
+	e.setHeader("baz", "bat")
+	assert.Nil(t, unset(0).run(e, []string{"var", "foob"}))
+	assert.Equal(t, 2, len(e.vars))
+	assert.Equal(t, 1, len(e.headers))
+}
+
+func TestUnsetShouldNotUnsetHeaderWhenHeaderAndAbsent(t *testing.T) {
+	e := newEnv()
+	e.setVar("foo", "bar")
+	e.setHeader("baz", "bat")
+	e.setHeader("baza", "bata")
+	assert.Nil(t, unset(0).run(e, []string{"header", "bazb"}))
+	assert.Equal(t, 1, len(e.vars))
+	assert.Equal(t, 2, len(e.headers))
 }

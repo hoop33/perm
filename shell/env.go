@@ -9,9 +9,10 @@ import (
 )
 
 type env struct {
-	scheme string
-	host   string
-	vars   map[string]string
+	scheme  string
+	host    string
+	vars    map[string]string
+	headers map[string]string
 }
 
 func newEnv() *env {
@@ -20,13 +21,34 @@ func newEnv() *env {
 		host:   "localhost:3000",
 	}
 	e.resetVars()
+	e.resetHeaders()
 	allCommands[e.name()] = e
 
 	return e
 }
 
+func (e *env) setVar(key, val string) {
+	e.vars[key] = val
+}
+
+func (e *env) unsetVar(key string) {
+	delete(e.vars, key)
+}
+
 func (e *env) resetVars() {
 	e.vars = make(map[string]string)
+}
+
+func (e *env) setHeader(header, val string) {
+	e.headers[header] = val
+}
+
+func (e *env) unsetHeader(header string) {
+	delete(e.headers, header)
+}
+
+func (e *env) resetHeaders() {
+	e.headers = make(map[string]string)
 }
 
 func (e *env) prompt() string {
