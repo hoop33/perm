@@ -4,7 +4,34 @@
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) 
 
+## Disclaimer &mdash; Very Early Alpha
+
+Lots of things changing, early days, etc. Use at your own risk.
+
 ## Overview
+
+When we interact with URLs from the command line, most of us reach for the excellent [curl](https://curl.haxx.se). And with good reason.
+
+In a "new phone, who dis?" way, though, curl runs your request and promptly forgets it. In many cases, that's fine. You're just running a request or two, so specifying all your information in each request is no big deal.
+
+In some cases, however, you're running multiple requests to the same domain, using the same headers, and maybe mostly the same query or form fields. Wouldn't _persistence_ be nice here?
+
+Enter Perm. Perm is curl with persistence. You launch perm, set some headers, set some query fields, and run a query. _Then_, you run another query with a _relative URL_, and all the headers and query strings you set before are _still sent_. Example session:
+
+```sh
+$ perm
+perm 0.1.0
+Type "help" for more information.
+http://localhost:3000> set header Accept application/json
+http://localhost:3000> set header api-key abcd1234
+http://localhost:3000> set var foo bar
+http://localhost:3000> set var baz bat
+http://localhost:3000> get https://example.com
+# Results for https://example.com/?foo=bar&baz=bat with both headers set
+https://example.com> unset var baz
+https://example.com> get /test
+# Results for https://example.com/?foo=bar with both headers set
+```
 
 ## Installation
 
@@ -20,7 +47,7 @@ $ go get -u github.com/hoop33/perm
 
 ### Download Binaries
 
-Binaries for macOS, Linux, and Windows are available on the Releases page.
+Binaries for macOS, Linux, and Windows are available on the Releases page (coming).
 
 ### Build from Source
 
@@ -84,15 +111,14 @@ GETs <https://github.com/hoop33/perm> and changes the current base URL to `https
 - [ ] Load/save environments
 - [ ] Configure HTTP client (timeout, insecure, ??)
 - [ ] Add S3 URLs
-- [ ] GET with query string
+- [x] GET with query string
 - [ ] POST
 - [ ] PUT
 - [ ] DELETE
 - [ ] HEAD
 - [ ] Cookies
-- [ ] Headers
+- [x] Headers
 - [ ] Open in Browser
-- [ ] Why did I add environment variables?
 
 ## Contributing
 
