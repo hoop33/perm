@@ -1,8 +1,9 @@
 package shell
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetNameShouldReturnGet(t *testing.T) {
@@ -15,10 +16,6 @@ func TestGetDescriptionShouldNotBeEmpty(t *testing.T) {
 
 func TestGetUsageShouldNotBeEmpty(t *testing.T) {
 	assert.NotEqual(t, "", get(0).usage())
-}
-
-func TestGetRunShouldReturnNil(t *testing.T) {
-	assert.Nil(t, get(0).run(nil, nil))
 }
 
 func TestGetShouldRegisterItself(t *testing.T) {

@@ -2,8 +2,10 @@ package shell
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"sort"
+	"time"
 
 	"github.com/hoop33/perm/config"
 )
@@ -13,6 +15,7 @@ type env struct {
 	host    string
 	vars    map[string][]string
 	headers map[string][]string
+	client  *http.Client
 }
 
 func newEnv() *env {
@@ -22,6 +25,7 @@ func newEnv() *env {
 	}
 	e.resetVars()
 	e.resetHeaders()
+	e.resetClient()
 	allCommands[e.name()] = e
 
 	return e
@@ -41,6 +45,13 @@ func (e *env) unsetVar(key string) {
 
 func (e *env) resetVars() {
 	e.vars = make(map[string][]string)
+}
+
+func (e *env) resetClient() {
+	// TODO configuration
+	e.client = &http.Client{
+		Timeout: time.Second * 30,
+	}
 }
 
 func (e *env) setHeader(header string, vals ...string) {

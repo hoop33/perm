@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type get int
@@ -21,22 +22,31 @@ func (g get) usage() string {
 }
 
 func (g get) run(env *env, args []string) error {
-	// TODO centralize client, make it configurable over the life of the program
-	if len(args) == 0 {
-		fmt.Println(g.usage())
-		return nil
+	urlStr := "/"
+	if len(args) > 0 {
+		urlStr = args[0]
 	}
 
-	url, err := env.mergeURL(args[0])
+	url, err := env.mergeURL(urlStr)
 	if err != nil {
 		return err
 	}
 
-	resp, err := http.Get(url.String())
+	req, err := http.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return err
+	}
+
+	for h, vals := range env.headers {
+		req.Header.Set(h, strings.Join(vals, ","))
+	}
+
+	resp, err := env.client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
