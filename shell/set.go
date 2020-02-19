@@ -19,22 +19,17 @@ func (s set) usage() string {
 }
 
 func (s set) run(env *env, args []string) error {
-	// Need 2 values: <header|var> key [value]
+	// Need at least 2 values: <header|var> key [value]
 	if len(args) < 2 {
 		s.usage()
 		return nil
 	}
 
-	val := "true"
-	if len(args) >= 3 {
-		val = args[2]
-	}
-
 	switch args[0] {
 	case "header":
-		env.setHeader(args[1], val)
+		env.setHeader(args[1], args[2:]...)
 	case "var":
-		env.setVar(args[1], val)
+		env.setVar(args[1], args[2:]...)
 	default:
 		s.usage()
 	}

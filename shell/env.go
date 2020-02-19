@@ -11,8 +11,8 @@ import (
 type env struct {
 	scheme  string
 	host    string
-	vars    map[string]string
-	headers map[string]string
+	vars    map[string][]string
+	headers map[string][]string
 }
 
 func newEnv() *env {
@@ -27,8 +27,12 @@ func newEnv() *env {
 	return e
 }
 
-func (e *env) setVar(key, val string) {
-	e.vars[key] = val
+func (e *env) setVar(key string, vals ...string) {
+	if len(vals) == 0 {
+		e.vars[key] = []string{"true"}
+	} else {
+		e.vars[key] = vals
+	}
 }
 
 func (e *env) unsetVar(key string) {
@@ -36,11 +40,15 @@ func (e *env) unsetVar(key string) {
 }
 
 func (e *env) resetVars() {
-	e.vars = make(map[string]string)
+	e.vars = make(map[string][]string)
 }
 
-func (e *env) setHeader(header, val string) {
-	e.headers[header] = val
+func (e *env) setHeader(header string, vals ...string) {
+	if len(vals) == 0 {
+		e.headers[header] = []string{"true"}
+	} else {
+		e.headers[header] = vals
+	}
 }
 
 func (e *env) unsetHeader(header string) {
@@ -48,7 +56,7 @@ func (e *env) unsetHeader(header string) {
 }
 
 func (e *env) resetHeaders() {
-	e.headers = make(map[string]string)
+	e.headers = make(map[string][]string)
 }
 
 func (e *env) prompt() string {
@@ -93,10 +101,9 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 		return nil, err
 	}
 
-	// TODO multiples
 	if len(qs) != 0 {
 		for k, v := range qs {
-			e.vars[k] = v[0]
+			e.setVar(k, v...)
 		}
 	}
 
@@ -109,10 +116,11 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 		return nil, err
 	}
 
-	// TODO multiples
 	q := merged.Query()
-	for k, v := range e.vars {
-		q.Add(k, v)
+	for k, vals := range e.vars {
+		for _, v := range vals {
+			q.Add(k, v)
+		}
 	}
 	merged.RawQuery = q.Encode()
 

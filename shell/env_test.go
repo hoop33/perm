@@ -41,7 +41,7 @@ func TestPromptShouldUpdateWithSchemeAndHost(t *testing.T) {
 
 func TestEnvRunShouldReturnNilWhenEnvIsSelf(t *testing.T) {
 	e := newEnv()
-	e.vars["foo"] = "bar"
+	e.setVar("foo", "bar")
 	assert.Nil(t, e.run(e, nil))
 }
 
@@ -201,8 +201,8 @@ func TestEnvMergeURLShouldCreateQueryStringFromVars(t *testing.T) {
 	e := newEnv()
 	e.scheme = "http"
 	e.host = "localhost:3000"
-	e.vars["foo"] = "bar"
-	e.vars["baz"] = "bat"
+	e.setVar("foo", "bar")
+	e.setVar("baz", "bat")
 	url, err := e.mergeURL("/")
 	assert.Nil(t, err)
 	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
@@ -216,16 +216,16 @@ func TestEnvMergeURLShouldCreateVarsFromQueryString(t *testing.T) {
 	e.host = "localhost:3000"
 	_, err := e.mergeURL("/?foo=bar&baz=bat")
 	assert.Nil(t, err)
-	assert.Equal(t, "bar", e.vars["foo"])
-	assert.Equal(t, "bat", e.vars["baz"])
+	assert.Equal(t, "bar", e.vars["foo"][0])
+	assert.Equal(t, "bat", e.vars["baz"][0])
 }
 
 func TestEnvMergeURLShouldMergeQueryStringAndVars(t *testing.T) {
 	e := newEnv()
 	e.scheme = "http"
 	e.host = "localhost:3000"
-	e.vars["foo"] = "bar"
-	e.vars["baz"] = "bat"
+	e.setVar("foo", "bar")
+	e.setVar("baz", "bat")
 	url, err := e.mergeURL("/?one=two&three=four")
 	assert.Nil(t, err)
 	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
@@ -233,16 +233,26 @@ func TestEnvMergeURLShouldMergeQueryStringAndVars(t *testing.T) {
 	assert.NotEqual(t, -1, strings.Index(url.String(), "baz=bat"))
 	assert.NotEqual(t, -1, strings.Index(url.String(), "one=two"))
 	assert.NotEqual(t, -1, strings.Index(url.String(), "three=four"))
-	assert.Equal(t, "bar", e.vars["foo"])
-	assert.Equal(t, "bat", e.vars["baz"])
-	assert.Equal(t, "two", e.vars["one"])
-	assert.Equal(t, "four", e.vars["three"])
+	assert.Equal(t, "bar", e.vars["foo"][0])
+	assert.Equal(t, "bat", e.vars["baz"][0])
+	assert.Equal(t, "two", e.vars["one"][0])
+	assert.Equal(t, "four", e.vars["three"][0])
+}
+
+func TestEnvMergeURLShouldMergeQueryStringWithMultipleValues(t *testing.T) {
+	e := newEnv()
+	e.scheme = "http"
+	e.host = "localhost:3000"
+	e.setVar("foo", "bar", "baz", "bat")
+	url, err := e.mergeURL("/")
+	assert.Nil(t, err)
+	assert.Equal(t, "http://localhost:3000/?foo=bar&foo=baz&foo=bat", url.String())
 }
 
 func TestEnvResetVarsShouldDeleteAllVars(t *testing.T) {
 	e := newEnv()
-	e.vars["foo"] = "bar"
-	e.vars["baz"] = "bat"
+	e.setVar("foo", "bar")
+	e.setVar("baz", "bat")
 	assert.Equal(t, 2, len(e.vars))
 	e.resetVars()
 	assert.Equal(t, 0, len(e.vars))
