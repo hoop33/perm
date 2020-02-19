@@ -2,6 +2,7 @@
 
 > A REPL for HTTP(S)
 
+![](https://github.com/hoop33/perm/workflows/Go/badge.svg)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) 
 
 ## Disclaimer &mdash; Very Early Alpha
