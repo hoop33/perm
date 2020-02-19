@@ -87,17 +87,36 @@ func (e *env) usage() string {
 }
 
 func (e *env) run(_ *env, _ []string) error {
-	sorted := make([]string, 0, len(e.vars))
-	for key := range e.vars {
+	if len(e.headers) > 0 {
+		fmt.Println("Headers:")
+		e.showHeaders()
+	}
+	if len(e.vars) > 0 {
+		fmt.Println("Variables:")
+		e.showVars()
+	}
+
+	return nil
+}
+
+func (e *env) showHeaders() {
+	showSorted(e.headers)
+}
+
+func (e *env) showVars() {
+	showSorted(e.vars)
+}
+
+func showSorted(m map[string][]string) {
+	sorted := make([]string, 0, len(m))
+	for key := range m {
 		sorted = append(sorted, key)
 	}
 	sort.Strings(sorted)
 
 	for _, key := range sorted {
-		fmt.Printf("%s = %s\n", key, e.vars[key])
+		fmt.Printf("  %s = %s\n", key, m[key])
 	}
-
-	return nil
 }
 
 func (e *env) mergeURL(urlStr string) (*url.URL, error) {
