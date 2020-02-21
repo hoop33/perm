@@ -31,7 +31,7 @@ http://localhost:3000> get https://example.com
 # Results for https://example.com/?foo=bar&baz=bat with both headers set
 https://example.com> unset var baz
 https://example.com> get /test
-# Results for https://example.com/?foo=bar with both headers set
+# Results for https://example.com/test?foo=bar with both headers set
 ```
 
 ## Installation
