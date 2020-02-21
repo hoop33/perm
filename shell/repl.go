@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"github.com/hoop33/perm/config"
 	"github.com/peterh/liner"
 )
+
+var errExit = errors.New("exit")
 
 // Repl is the REPL for perm
 type Repl struct {
@@ -59,6 +62,9 @@ func (r *Repl) doLoop() error {
 				r.line.AppendHistory(cmdLine)
 				if cmd, ok := allCommands[cmds[0]]; ok {
 					err := cmd.run(r.env, cmds[1:])
+					if err == errExit {
+						return nil
+					}
 					if err != nil {
 						fmt.Fprintln(os.Stderr, err)
 					}
