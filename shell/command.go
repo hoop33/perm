@@ -3,6 +3,8 @@ package shell
 import (
 	"fmt"
 	"sort"
+
+	"github.com/hoop33/perm/config"
 )
 
 type command interface {
@@ -30,8 +32,9 @@ func sortedCommandNames() []string {
 func maxLen() int {
 	if maxCommandLength == 0 {
 		for _, name := range sortedCommandNames() {
-			if len(name) > maxCommandLength {
-				maxCommandLength = len(name)
+			c := config.Info(name)
+			if len(c) > maxCommandLength {
+				maxCommandLength = len(c)
 			}
 		}
 	}
@@ -54,7 +57,7 @@ func (c commands) usage() string {
 
 func (commands) run(_ *env, _ []string) error {
 	for _, name := range sortedCommandNames() {
-		fmt.Printf("%-*s  %s\n", maxLen(), name, allCommands[name].description())
+		fmt.Printf("%-*s  %s\n", maxLen(), config.Info(name), config.Text(allCommands[name].description()))
 	}
 	return nil
 }

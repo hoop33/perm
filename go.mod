@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/adrg/xdg v0.2.1
+	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381
 	github.com/mattn/go-runewidth v0.0.8 // indirect
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/peterh/liner v1.2.0

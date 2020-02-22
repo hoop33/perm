@@ -1,7 +1,10 @@
 package shell
 
-import "fmt"
-import "github.com/hoop33/perm/config"
+import (
+	"fmt"
+
+	"github.com/hoop33/perm/config"
+)
 
 type version int
 
@@ -18,7 +21,7 @@ func (v version) usage() string {
 }
 
 func (version) run(_ *env, _ []string) error {
-	fmt.Println(config.AppVersion)
+	fmt.Println(config.Info(fmt.Sprintf("%s %s", config.AppName, config.AppVersion)))
 	return nil
 }
 

@@ -50,8 +50,8 @@ func (r *Repl) readHistory() {
 }
 
 func (r *Repl) displayBanner() {
-	fmt.Printf("%s %s\n", config.AppName, config.AppVersion)
-	fmt.Println("Type \"help\" for more information.")
+	fmt.Printf("%s %s\n", config.Info(config.AppName), config.Info(config.AppVersion))
+	fmt.Println(config.Text("Type \"help\" for more information."))
 }
 
 func (r *Repl) doLoop() error {
@@ -66,10 +66,10 @@ func (r *Repl) doLoop() error {
 						return nil
 					}
 					if err != nil {
-						fmt.Fprintln(os.Stderr, err)
+						fmt.Fprintln(os.Stderr, config.Error(err.Error()))
 					}
 				} else {
-					fmt.Fprintf(os.Stderr, "command '%s' not found\n", cmds[0])
+					fmt.Fprintf(os.Stderr, config.Error(fmt.Sprintf("command '%s' not found\n", cmds[0])))
 				}
 			}
 		} else if err == liner.ErrPromptAborted || err == io.EOF {
