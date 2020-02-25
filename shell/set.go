@@ -2,6 +2,8 @@ package shell
 
 import (
 	"fmt"
+
+	"github.com/hoop33/perm/config"
 )
 
 type set int
@@ -21,7 +23,7 @@ func (s set) usage() string {
 func (s set) run(env *env, args []string) error {
 	// Need at least 2 values: <header|var> key [value]
 	if len(args) < 2 {
-		s.usage()
+		fmt.Println(config.Error(s.usage()))
 		return nil
 	}
 
@@ -31,7 +33,8 @@ func (s set) run(env *env, args []string) error {
 	case "var":
 		env.setVar(args[1], args[2:]...)
 	default:
-		s.usage()
+		// So they left out var or header -- call it var
+		env.setVar(args[0], args[1:]...)
 	}
 
 	return nil

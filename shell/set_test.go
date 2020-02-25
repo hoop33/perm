@@ -41,10 +41,10 @@ func TestSetShouldSetNothingWhenOneArg(t *testing.T) {
 	assert.Equal(t, 0, len(e.headers))
 }
 
-func TestSetShouldSetNothingWhenNotVarOrHeader(t *testing.T) {
+func TestSetShouldSetVarWhenNotVarOrHeader(t *testing.T) {
 	e := newEnv()
 	assert.Nil(t, set(0).run(e, []string{"foo", "bar"}))
-	assert.Equal(t, 0, len(e.vars))
+	assert.Equal(t, 1, len(e.vars))
 	assert.Equal(t, 0, len(e.headers))
 }
 
