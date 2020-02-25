@@ -17,6 +17,11 @@ func Info(s string) string {
 	return aurora.Green(s).String()
 }
 
+// Header returns a string colorized as header
+func Header(s string) string {
+	return aurora.Blue(s).String()
+}
+
 // Default returns a string colorized as default
 func Default(s string) string {
 	return s

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/hoop33/perm/config"
@@ -88,11 +89,11 @@ func (e *env) usage() string {
 
 func (e *env) run(_ *env, _ []string) error {
 	if len(e.headers) > 0 {
-		fmt.Println("Headers:")
+		fmt.Println(config.Header("Headers:"))
 		e.showHeaders()
 	}
 	if len(e.vars) > 0 {
-		fmt.Println("Variables:")
+		fmt.Println(config.Header("Variables:"))
 		e.showVars()
 	}
 
@@ -115,7 +116,7 @@ func showSorted(m map[string][]string) {
 	sort.Strings(sorted)
 
 	for _, key := range sorted {
-		fmt.Printf("  %s = %s\n", key, m[key])
+		fmt.Printf("  %s = %s\n", config.Info(key), config.Text(strings.Join(m[key], ", ")))
 	}
 }
 
