@@ -257,3 +257,9 @@ func TestEnvResetVarsShouldDeleteAllVars(t *testing.T) {
 	e.resetVars()
 	assert.Equal(t, 0, len(e.vars))
 }
+
+func TestEnvRunShouldHandleHeadersWhenSet(t *testing.T) {
+	e := newEnv()
+	e.setHeader("foo", "bar")
+	assert.Nil(t, e.run(nil, nil))
+}
