@@ -113,13 +113,15 @@ GETs <https://github.com/hoop33/perm> and changes the current base URL to `https
 - [ ] Configure HTTP client (timeout, insecure, ??)
 - [ ] Add S3 URLs
 - [x] GET with query string
-- [ ] POST
+- [x] POST form
+- [ ] POST json
 - [ ] PUT
 - [ ] DELETE
 - [ ] HEAD
 - [ ] Cookies
 - [x] Headers
 - [ ] Open in Browser
+- [ ] JSON filtering (response)
 
 ## Contributing
 

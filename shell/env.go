@@ -126,10 +126,28 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 		return nil, err
 	}
 
-	// Get the query string and, if it exists, add it to the env vars
-	qs, err := url.ParseQuery(u.RawQuery)
+	// Store any variables that came in through the URL
+	if err = e.storeQueryVars(u); err != nil {
+		return nil, err
+	}
+
+	// Build the url by combining what was passed with the environment
+	merged, err := e.buildURL(u)
 	if err != nil {
 		return nil, err
+	}
+
+	// Store the latest in the environment
+	e.scheme = merged.Scheme
+	e.host = merged.Host
+
+	return merged, nil
+}
+
+func (e *env) storeQueryVars(u *url.URL) error {
+	qs, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return err
 	}
 
 	if len(qs) != 0 {
@@ -138,25 +156,23 @@ func (e *env) mergeURL(urlStr string) (*url.URL, error) {
 		}
 	}
 
+	return nil
+}
+
+func (e *env) buildURL(u *url.URL) (*url.URL, error) {
 	scheme := config.FirstNonBlank(u.Scheme, e.scheme)
 	host := config.FirstNonBlank(u.Host, e.host)
 	path := config.AddPrefixIfAbsent(u.Path, "/")
 
-	merged, err := url.Parse(fmt.Sprintf("%s://%s%s#%s", scheme, host, path, u.Fragment))
-	if err != nil {
-		return nil, err
-	}
+	return url.Parse(fmt.Sprintf("%s://%s%s#%s", scheme, host, path, u.Fragment))
+}
 
-	q := merged.Query()
+func (e *env) values() *url.Values {
+	values := &url.Values{}
 	for k, vals := range e.vars {
 		for _, v := range vals {
-			q.Add(k, v)
+			values.Add(k, v)
 		}
 	}
-	merged.RawQuery = q.Encode()
-
-	e.scheme = merged.Scheme
-	e.host = merged.Host
-
-	return merged, nil
+	return values
 }

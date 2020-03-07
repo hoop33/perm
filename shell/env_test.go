@@ -1,7 +1,6 @@
 package shell
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -197,19 +196,6 @@ func TestEnvMergeURLShouldRetainTheBaseURLWhenURLIsRelativeAndHasFragment(t *tes
 	assert.Equal(t, "localhost:3000", e.host)
 }
 
-func TestEnvMergeURLShouldCreateQueryStringFromVars(t *testing.T) {
-	e := newEnv()
-	e.scheme = "http"
-	e.host = "localhost:3000"
-	e.setVar("foo", "bar")
-	e.setVar("baz", "bat")
-	url, err := e.mergeURL("/")
-	assert.Nil(t, err)
-	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "foo=bar"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "baz=bat"))
-}
-
 func TestEnvMergeURLShouldCreateVarsFromQueryString(t *testing.T) {
 	e := newEnv()
 	e.scheme = "http"
@@ -226,17 +212,12 @@ func TestEnvMergeURLShouldMergeQueryStringAndVars(t *testing.T) {
 	e.host = "localhost:3000"
 	e.setVar("foo", "bar")
 	e.setVar("baz", "bat")
-	url, err := e.mergeURL("/?one=two&three=four")
+	_, err := e.mergeURL("/?one=two&three=four")
 	assert.Nil(t, err)
-	assert.True(t, strings.HasPrefix(url.String(), "http://localhost:3000/?"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "foo=bar"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "baz=bat"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "one=two"))
-	assert.NotEqual(t, -1, strings.Index(url.String(), "three=four"))
-	assert.Equal(t, "bar", e.vars["foo"][0])
-	assert.Equal(t, "bat", e.vars["baz"][0])
-	assert.Equal(t, "two", e.vars["one"][0])
-	assert.Equal(t, "four", e.vars["three"][0])
+	assert.Equal(t, "bar", e.values().Get("foo"))
+	assert.Equal(t, "bat", e.values().Get("baz"))
+	assert.Equal(t, "two", e.values().Get("one"))
+	assert.Equal(t, "four", e.values().Get("three"))
 }
 
 func TestEnvMergeURLShouldMergeQueryStringWithMultipleValues(t *testing.T) {
@@ -244,9 +225,9 @@ func TestEnvMergeURLShouldMergeQueryStringWithMultipleValues(t *testing.T) {
 	e.scheme = "http"
 	e.host = "localhost:3000"
 	e.setVar("foo", "bar", "baz", "bat")
-	url, err := e.mergeURL("/")
+	_, err := e.mergeURL("/")
 	assert.Nil(t, err)
-	assert.Equal(t, "http://localhost:3000/?foo=bar&foo=baz&foo=bat", url.String())
+	assert.Equal(t, 3, len(e.vars["foo"]))
 }
 
 func TestEnvResetVarsShouldDeleteAllVars(t *testing.T) {
